@@ -12,8 +12,16 @@ const StyledApp = styled.div`
   text-align: center;
 `;
 
+const getLocalStorage = () => {
+  const contactsInLocalStorage = localStorage.getItem('contacts');
+  if (contactsInLocalStorage !== null) {
+    return JSON.parse(contactsInLocalStorage);
+  }
+  return [];
+};
+
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(getLocalStorage());
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
@@ -28,7 +36,7 @@ export const App = () => {
   }, [contacts]);
 
   const addContact = (name, number) => {
-    const existingContact = contacts.find((contact) => contact.name === name);
+    const existingContact = contacts.find(contact => contact.name === name);
 
     if (existingContact) {
       alert(`${name} is already in the phone book.`);
@@ -36,20 +44,24 @@ export const App = () => {
     }
 
     const newContact = { id: nanoid(), name, number };
-    setContacts((prevContacts) => [...prevContacts, newContact]);
+    setContacts(prevContacts => [...prevContacts, newContact]);
   };
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = e => {
     setFilter(e.target.value);
   };
 
-  const deleteContact = (id) => {
-    setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== id));
+  const deleteContact = id => {
+    setContacts(prevContacts =>
+      prevContacts.filter(contact => contact.id !== id)
+    );
   };
 
   const getFilteredContacts = () => {
     const normalizedFilter = filter.toLowerCase();
-    return contacts.filter((contact) => contact.name.toLowerCase().includes(normalizedFilter));
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
   };
 
   const filteredContacts = getFilteredContacts();
@@ -70,5 +82,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>
 );
-
-
